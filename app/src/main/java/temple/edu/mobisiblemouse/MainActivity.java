@@ -14,7 +14,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sensorManager;
     private Sensor sensor;
     TextView txt;
-    float yDisplacement, prevValue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,11 +52,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onSensorChanged(SensorEvent sensorEvent) {
         if(sensorEvent.sensor.getType() == Sensor.TYPE_PROXIMITY){
             float currentValue = sensorEvent.values[0];
-            //yDisplacement = prevValue - currentValue;
-            //Toast.makeText(this, currentValue+"",Toast.LENGTH_SHORT).show();
-            txt.setText(sensorEvent.values[0]+"");
-            //txt.setText("The finger moved: " + yDisplacement + " cm!");
-            prevValue = currentValue;
+            txt.setText(currentValue+"");
+
         }
     }
 
