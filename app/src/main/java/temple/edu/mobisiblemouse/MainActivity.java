@@ -1,79 +1,64 @@
 package temple.edu.mobisiblemouse;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 import androidx.appcompat.app.AppCompatActivity;
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.android.LoaderCallbackInterface;
-import edu.washington.cs.touchfreelibrary.sensors.*;
-import edu.washington.cs.touchfreelibrary.touchemulation.*;
 
+public class MainActivity extends AppCompatActivity {
+    String msg = "";
+    EditText message;
+    Button button;
+    static String SERVER_IP = "192.168.110.1";
+    static int SERVER_PORT = 8000;
+    private static Socket s;
+    PrintWriter pw;
 
-public class MainActivity extends AppCompatActivity implements CameraGestureSensor.Listener{
-
-    public CameraGestureSensor mGestureSensor;
-    private boolean mOpenCVInitiated;
-    private TextView textView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setTitle("Mobisible Mouse");
-        mGestureSensor = new CameraGestureSensor(this);
-        mGestureSensor.addGestureListener(this);
+        message = findViewById(R.id.message);
+        button = findViewById(R.id.button);
 
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_11, this, mLoaderCallback);
-
-        /*
-         * Steps to perform:
-         * 1) Get user permission for sound detection, bluetooth and camera usage
-         * 2) Either use OpenCV for motion detection, or use microphone, speaker
-         * and vibration detection for hand gesture and movement tracking.
-         * 3) Map the motion to a 2D plane
-         * 4) Send input to the computer over bluetooth
-         * 5) Make the computer perform  mouse actions based on this data. Will have
-         * to develop a simple software to connect with phone and perform the actions
-         * */
-
-    }
-    /** OpenCV library initialization. */
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS: {
-                    mOpenCVInitiated = true;
-                    CameraGestureSensor.loadLibrary();
-                    mGestureSensor.start(); 	// your main gesture sensor object
-
-                } break;
-                default:
-                {
-                    super.onManagerConnected(status);
-                } break;
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendText(view);
             }
+        });
+    }
+    public void sendText(View view){
+        msg = message.getText().toString();
+        Messager obj = new Messager();
+        obj.execute();
+        Toast.makeText(getApplicationContext(),"Sending Message",Toast.LENGTH_LONG).show();
+    }
+
+    public class Messager extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void ... params) {
+            try {
+                s = new Socket(SERVER_IP, SERVER_PORT);
+                //Toast.makeText(getApplicationContext(), "Connecting to IP", Toast.LENGTH_LONG).show();
+                pw = new PrintWriter(s.getOutputStream());
+                pw.write(msg);
+                pw.flush();
+                pw.close();
+                s.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
-    };
-
-    @Override
-    public void onGestureUp(CameraGestureSensor caller, long gestureLength) {
-        textView.setText("UP");
     }
 
-    @Override
-    public void onGestureDown(CameraGestureSensor caller, long gestureLength) {
-        textView.setText("DOWN");
-    }
-
-    @Override
-    public void onGestureLeft(CameraGestureSensor caller, long gestureLength) {
-        textView.setText("LEFT");
-    }
-
-    @Override
-    public void onGestureRight(CameraGestureSensor caller, long gestureLength) {
-        textView.setText("RIGHT");
-    }
 }

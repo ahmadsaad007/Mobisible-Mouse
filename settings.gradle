@@ -1,3 +1,2 @@
-include ':app', ':touchFreeLibrary'
+include ':app',
 rootProject.name='Mobisible Mouse'
-include ':openCVLibrary2411'
