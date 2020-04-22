@@ -7,11 +7,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,73 +20,66 @@ import java.net.Socket;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
-    String msg = "";
-    EditText message;
-    Button button;
-    static String SERVER_IP = "192.168.110.1";
-    static int SERVER_PORT = 8000;
+    private String msg = "";
+    private TextView message;
+    private Button button;
+    private static String SERVER_IP = "192.168.110.1";
+    private static int SERVER_PORT = 8000;
     private static Socket s;
-    PrintWriter pw;
+    private PrintWriter pw;
 
-    private float lastX, lastY, lastZ;
+    private float lastX = 0.0f, lastY = 0.0f;
 
     private SensorManager sensorManager;
     private Sensor accelerometer;
 
-    private float deltaXMax = 0;
-    private float deltaYMax = 0;
-    private float deltaZMax = 0;
+    private float deltaXMax = 0.0f;
+    private float deltaYMax = 0.0f;
+    private float deltaX = 0.0f;
+    private float deltaY = 0.0f;
+    private String data = "";
 
-    private float deltaX = 0;
-    private float deltaY = 0;
-    private float deltaZ = 0;
-
-    private float vibrateThreshold = 0;
-
-    private TextView currentX, currentY, currentZ, maxX, maxY, maxZ;
-
-    public Vibrator v;
+    private TextView currentX, currentY, maxX, maxY;
+    private String direction = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeViews();
-        message = findViewById(R.id.message);
+        message = (TextView)findViewById(R.id.message);
         button = findViewById(R.id.button);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendText(view);
+                data = "Click";
+                sendText(data);
             }
         });
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if(sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null){
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-            vibrateThreshold = accelerometer.getMaximumRange() / 2;
+            sensorManager.registerListener(this, accelerometer, 10000000);
         } else{
             Log.e("Error", "No Sensor");
         }
-        v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
     }
-    public void sendText(View view){
-        msg = message.getText().toString();
+    public void sendText(String data){
+        msg = data;
+        message.setText(msg);
+        Log.e("Message", msg);
         Messager obj = new Messager();
         obj.execute();
-        Toast.makeText(getApplicationContext(),"Sending Message",Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(),"Sending Message",Toast.LENGTH_LONG).show();
     }
 
     public void initializeViews() {
         currentX = (TextView) findViewById(R.id.currentX);
         currentY = (TextView) findViewById(R.id.currentY);
-        currentZ = (TextView) findViewById(R.id.currentZ);
-
         maxX = (TextView) findViewById(R.id.maxX);
         maxY = (TextView) findViewById(R.id.maxY);
-        maxZ = (TextView) findViewById(R.id.maxZ);
     }
 
     @Override
@@ -100,43 +91,53 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, accelerometer, 10000000);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // clean current values
-        displayCleanValues();
         // display the current x,y,z accelerometer values
         displayCurrentValues();
         // display the max x,y,z accelerometer values
         displayMaxValues();
 
-        // get the change of the x,y,z values of the accelerometer
-        deltaX = Math.abs(lastX - event.values[0]);
-        deltaY = Math.abs(lastY - event.values[1]);
-        deltaZ = Math.abs(lastZ - event.values[2]);
+        // get the change of the x,y values of the accelerometer
+        deltaX = lastX - event.values[0];
+        deltaY = lastY - event.values[1];
 
-        // if the change is below 2, it is just plain noise
-        if (deltaX < 2)
-            deltaX = 0;
-        if (deltaY < 2)
-            deltaY = 0;
-        if ((deltaZ > vibrateThreshold) || (deltaY > vibrateThreshold) || (deltaZ > vibrateThreshold)) {
-            v.vibrate(50);
+        lastX = event.values[0];
+        lastY = event.values[1];
+
+        // if the change is below 1, it is just plain noise
+        if (deltaX < 1 && deltaX > -1 )
+            deltaX = 0.0f;
+        else{
+            if(deltaX>1)
+                direction = "Right";
+            else
+                direction = "Left";
+            data = deltaX + " " + direction;
         }
-    }
-
-    public void displayCleanValues() {
-        currentX.setText("0.0");
-        currentY.setText("0.0");
-        currentZ.setText("0.0");
+        if (deltaY < 1 && deltaY > -1)
+            deltaY = 0.0f;
+        else{
+            if(deltaX>1)
+                direction = "Up";
+            else
+                direction = "Down";
+            data = deltaY + " " + direction;
+        }
+        if(direction.compareTo("")!=0){
+            Toast.makeText(getApplicationContext(),direction,Toast.LENGTH_SHORT).show();
+            direction = "";
+            sendText(data);
+            Log.e("DATA1",data);
+        }
     }
 
     public void displayCurrentValues() {
         currentX.setText(Float.toString(deltaX));
         currentY.setText(Float.toString(deltaY));
-        currentZ.setText(Float.toString(deltaZ));
     }
 
     public void displayMaxValues() {
@@ -148,21 +149,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             deltaYMax = deltaY;
             maxY.setText(Float.toString(deltaYMax));
         }
-        if (deltaZ > deltaZMax) {
-            deltaZMax = deltaZ;
-            maxZ.setText(Float.toString(deltaZMax));
-        }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 
     public class Messager extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void ... params) {
             try {
+
+                //message.setTextColor(Color.blue(1));
                 s = new Socket(SERVER_IP, SERVER_PORT);
                 //Toast.makeText(getApplicationContext(), "Connecting to IP", Toast.LENGTH_LONG).show();
                 pw = new PrintWriter(s.getOutputStream());
