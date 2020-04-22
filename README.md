@@ -7,6 +7,9 @@ An Android gesture controlled application that lets users interact with the mous
 3) Establishing a Connection With a Device: https://developer.android.com/guide/topics/connectivity
 4) Sensors Overview: https://developer.android.com/guide/topics/sensors/sensors_overview
 
-Articles/ Paper:
+# Articles/ Paper:
 1) Hand Gesture Classification Based on Non Audible Sound Using Convulutional Neural Network 
 Link: https://www.hindawi.com/journals/js/2019/1084841/#abstract
+
+# Link to Trello Board:
+https://trello.com/b/GL0Ply0b/mobisible-mouse
