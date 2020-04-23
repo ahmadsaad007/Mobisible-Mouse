@@ -1,6 +1,16 @@
 # Mobisible-Mouse
 An Android gesture controlled application that lets users interact with the mouse pointer on their PCs without using actual hardware
 
+## How to Build
+Install the following things:
+  1) python
+  2) pyautogui
+
+Open ServerCode>servre.py and modify Host to your computer's Public IP. (You can find this by typing ipconfig in cmd)
+After that save the file and run the server code.
+Next run the android application in an emulator.
+
+
 # Helpful Links for Project Completion
 1) Connect to Bluetooth: https://developer.android.com/guide/topics/connectivity/bluetooth
 2) Motion Detection Using Open CV: https://software.intel.com/en-us/node/754940
