@@ -3,13 +3,16 @@ import sys
 import pyautogui
 import time
 
-
 def data_processing(data):
 	global x
 	global y
 	#print("DATA: ", data)
-	if(data == 'Click'):
-		perform_click()
+	if(data == 'LClick'):
+		perform_Lclick()
+	elif(data == 'RClick'):
+		perform_Rclick()
+	elif(data == 'MClick'):
+		perform_Mclick()
 	else:
 		values = data.split()
 		direction = values[1]
@@ -25,9 +28,18 @@ def data_processing(data):
 			return
 		perform_movement(x,y)
 	return
-def perform_click():
-	time.sleep(5)
+
+def perform_Lclick():
+	time.sleep(2)
 	pyautogui.click()
+
+def perform_Rclick():
+	time.sleep(2)
+	pyautogui.click(button='right')
+
+def perform_Mclick():
+	time.sleep(2)
+	pyautogui.scroll(-10)
 
 def perform_movement(x,y):
 	pyautogui.dragRel(x, y, duration=2)
@@ -39,8 +51,6 @@ def connection():
 	sock.bind((HOST, 8000))
 	sock.listen(1)
 	print("listening")
-	#while True:
-	n = 1
 	# Wait for a connection
 	print(sys.stderr, 'waiting for a connection...')
 	connection, client_address = sock.accept()
@@ -51,8 +61,7 @@ def connection():
 		while(True):
 			current_pos = pyautogui.position()
 			data = connection.recv(2048)
-			print("received", data)
-			n = n + 1
+			#print("received", data)
 			if(len(data.decode('utf-8'))>0):
 				data_processing(data.decode('utf-8'))
 
