@@ -2,12 +2,12 @@
 An Android gesture controlled application that lets users interact with the mouse pointer on their PCs without using actual hardware
 
 ## How to Build
-1)Install the following things:
+1) Install the following things:
   a) python
   b) pyautogui
-2)Open ServerCode>servre.py and modify Host to your computer's Public IP. You can find this by typing ipconfig in cmd.
-3)After that save the file and run the server code.
-4)Next run the android application in an emulator.
+2) Open ServerCode>servre.py and modify Host to your computer's Public IP. You can find this by typing ipconfig in cmd.
+3) After that save the file and run the server code.
+4) Next run the android application in an emulator.
 
 
 ## Helpful Links for Project Completion
