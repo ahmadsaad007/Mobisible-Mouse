@@ -32,12 +32,12 @@ def data_processing(data):
 def perform_Lclick():
 	print("Left Click")
 	time.sleep(2)
-	pyautogui.click()
+	pyautogui.click(button='left', clicks=2, interval=0.25)
 
 def perform_Rclick():
 	print("Right Click")
 	time.sleep(2)
-	pyautogui.click(button='right')
+	pyautogui.click(button='right', clicks=3, interval=0.50)
 
 def perform_Mclick():
 	time.sleep(2)
@@ -45,9 +45,9 @@ def perform_Mclick():
 
 def perform_movement(x,y):
 	pyautogui.dragRel(x, y, duration=2)
-
+	pyautogui.moveRel(x, y, duration=2)
 def connection():	
-	HOST = "192.168.110.1"
+	HOST = "***.**.**.*"
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 	sock.bind((HOST, 8000))

@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private String msg = "";
     private TextView message;
     private Button buttonLeft, buttonRight, buttonMid;
-    private static String SERVER_IP = "192.168.110.1";
+    private static String SERVER_IP = "**********";
     private static int SERVER_PORT =8000;
     private static Socket s;
     private PrintWriter pw;
@@ -173,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         protected Void doInBackground(Void ... params) {
             try {
-
 
                 s = new Socket(SERVER_IP, SERVER_PORT);
                 //Toast.makeText(getApplicationContext(), "Connecting to IP", Toast.LENGTH_LONG).show();
