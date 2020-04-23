@@ -3,14 +3,16 @@ import sys
 import pyautogui
 import time
 
-
 def data_processing(data):
 	global x
 	global y
-	print("DATA: ", data)
-	time.sleep(5)
-	if(data == 'Click'):
-		perform_click()
+	#print("DATA: ", data)
+	if(data == 'LClick'):
+		perform_Lclick()
+	elif(data == 'RClick'):
+		perform_Rclick()
+	elif(data == 'MClick'):
+		perform_Mclick()
 	else:
 		values = data.split()
 		direction = values[1]
@@ -26,21 +28,31 @@ def data_processing(data):
 			return
 		perform_movement(x,y)
 	return
-def perform_click():
 
+def perform_Lclick():
+	print("Left Click")
+	time.sleep(2)
 	pyautogui.click()
+
+def perform_Rclick():
+	print("Right Click")
+	time.sleep(2)
+	pyautogui.click(button='right')
+
+def perform_Mclick():
+	time.sleep(2)
+	pyautogui.scroll(-10)
 
 def perform_movement(x,y):
 	pyautogui.dragRel(x, y, duration=2)
 
 def connection():	
-	HOST = '***.**.**.*'
+	HOST = "192.168.110.1"
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.bind((HOST, 8080))
-	sock.listen(1)
+	sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+	sock.bind((HOST, 8000))
+	sock.listen(2)
 	print("listening")
-	#while True:
-	n = 1
 	# Wait for a connection
 	print(sys.stderr, 'waiting for a connection...')
 	connection, client_address = sock.accept()
@@ -50,9 +62,8 @@ def connection():
 		# Receive the data in small chunks and retransmit it
 		while(True):
 			current_pos = pyautogui.position()
-			data = connection.recv(4096)
+			data = connection.recv(2048)
 			#print("received", data)
-			n = n + 1
 			if(len(data.decode('utf-8'))>0):
 				data_processing(data.decode('utf-8'))
 
