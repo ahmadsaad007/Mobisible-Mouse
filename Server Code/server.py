@@ -13,11 +13,10 @@ def data_processing(data):
 		perform_click()
 	else:
 		values = data.split()
-		print("Values:", values)
 		direction = values[1]
-		print("direction:", direction)
+		#print("direction:", direction)
 		val = int(float(values[0]))
-		print("Val:", val)
+		#print("Val:", val)
 		if(direction=='Up' or direction == 'Down'):
 			y = val*50
 		elif(direction == 'Right' or direction == 'Left'):
@@ -35,8 +34,9 @@ def perform_movement(x,y):
 	pyautogui.dragRel(x, y, duration=2)
 
 def connection():	
+	HOST = '***.**.**.*'
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.bind(('192.168.110.1', 8080))
+	sock.bind((HOST, 8080))
 	sock.listen(1)
 	print("listening")
 	#while True:
