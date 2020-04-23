@@ -23,8 +23,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private String msg = "";
     private TextView message;
     private Button button;
-    private static String SERVER_IP = "192.168.110.1";
-    private static int SERVER_PORT = 8000;
+    private static String SERVER_IP = "***.**.**.*";
+    private static int SERVER_PORT =8080;
     private static Socket s;
     private PrintWriter pw;
 
@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Log.e("Message", msg);
         Messager obj = new Messager();
         obj.execute();
-        //Toast.makeText(getApplicationContext(),"Sending Message",Toast.LENGTH_LONG).show();
     }
 
     public void initializeViews() {
@@ -160,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         protected Void doInBackground(Void ... params) {
             try {
 
-                //message.setTextColor(Color.blue(1));
+
                 s = new Socket(SERVER_IP, SERVER_PORT);
                 //Toast.makeText(getApplicationContext(), "Connecting to IP", Toast.LENGTH_LONG).show();
                 pw = new PrintWriter(s.getOutputStream());

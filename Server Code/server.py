@@ -1,37 +1,42 @@
 import socket
 import sys
 import pyautogui
-
+import time
 
 
 def data_processing(data):
 	global x
 	global y
-	print("x",x)
-	print(y)
-	if(data == "Click"):
+	print("DATA: ", data)
+	time.sleep(5)
+	if(data == 'Click'):
 		perform_click()
 	else:
 		values = data.split()
+		print("Values:", values)
 		direction = values[1]
-		val = values[0]
-		if(direction=="Up" or direction == "Down"):
-			y = val*2
-		elif(direction == "Right" or direction == "Left"):
-			x = val*2
+		print("direction:", direction)
+		val = int(float(values[0]))
+		print("Val:", val)
+		if(direction=='Up' or direction == 'Down'):
+			y = val*50
+		elif(direction == 'Right' or direction == 'Left'):
+			x = val*50
 		else:
-			print("Error Values")
+			print("Error Value")
+			return
 		perform_movement(x,y)
 	return
 def perform_click():
-	pyautogui.click(clicks=2, interval=0.0, button='right')
+
+	pyautogui.click()
 
 def perform_movement(x,y):
-	pyautogui.dragRel(x, y, duration=1)
+	pyautogui.dragRel(x, y, duration=2)
 
 def connection():	
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.bind(('192.168.110.1', 8000))
+	sock.bind(('192.168.110.1', 8080))
 	sock.listen(1)
 	print("listening")
 	#while True:
@@ -43,30 +48,18 @@ def connection():
 	try:
 		print('connection from', client_address)
 		# Receive the data in small chunks and retransmit it
-		while(n<5):
+		while(True):
 			current_pos = pyautogui.position()
 			data = connection.recv(4096)
-			print("received", data)
+			#print("received", data)
 			n = n + 1
-			data_processing(data)
+			if(len(data.decode('utf-8'))>0):
+				data_processing(data.decode('utf-8'))
 
 	finally:
 		# Clean up the connection
 		connection.close()
-		#n = 1
 	return
 x = 0
 y = 0
 connection()
-#conn, addr = serv.accept()
-#print("server connection successful.")
-#from_client = ''
-#while True:
-#    data = conn.recv(4096)
-#    if not data: break
-#    from_client += data
-#    print(from_client)
-#    conn.send("I am SERVER<br>")
-#conn.close()
-#print('client disconnected')
-  
