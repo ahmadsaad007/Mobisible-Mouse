@@ -30,10 +30,12 @@ def data_processing(data):
 	return
 
 def perform_Lclick():
+	print("Left Click")
 	time.sleep(2)
 	pyautogui.click()
 
 def perform_Rclick():
+	print("Right Click")
 	time.sleep(2)
 	pyautogui.click(button='right')
 
@@ -49,7 +51,7 @@ def connection():
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 	sock.bind((HOST, 8000))
-	sock.listen(1)
+	sock.listen(2)
 	print("listening")
 	# Wait for a connection
 	print(sys.stderr, 'waiting for a connection...')
