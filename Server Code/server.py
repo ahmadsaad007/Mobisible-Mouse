@@ -7,8 +7,7 @@ import time
 def data_processing(data):
 	global x
 	global y
-	print("DATA: ", data)
-	time.sleep(5)
+	#print("DATA: ", data)
 	if(data == 'Click'):
 		perform_click()
 	else:
@@ -27,16 +26,17 @@ def data_processing(data):
 		perform_movement(x,y)
 	return
 def perform_click():
-
+	time.sleep(5)
 	pyautogui.click()
 
 def perform_movement(x,y):
 	pyautogui.dragRel(x, y, duration=2)
 
 def connection():	
-	HOST = '***.**.**.*'
+	HOST = "192.168.110.1"
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.bind((HOST, 8080))
+	sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+	sock.bind((HOST, 8000))
 	sock.listen(1)
 	print("listening")
 	#while True:
@@ -50,8 +50,8 @@ def connection():
 		# Receive the data in small chunks and retransmit it
 		while(True):
 			current_pos = pyautogui.position()
-			data = connection.recv(4096)
-			#print("received", data)
+			data = connection.recv(2048)
+			print("received", data)
 			n = n + 1
 			if(len(data.decode('utf-8'))>0):
 				data_processing(data.decode('utf-8'))

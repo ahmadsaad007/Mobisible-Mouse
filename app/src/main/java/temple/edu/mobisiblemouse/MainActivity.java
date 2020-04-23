@@ -22,9 +22,9 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private String msg = "";
     private TextView message;
-    private Button button;
-    private static String SERVER_IP = "***.**.**.*";
-    private static int SERVER_PORT =8080;
+    private Button buttonLeft, buttonRight, buttonMid;
+    private static String SERVER_IP = "192.168.110.1";
+    private static int SERVER_PORT =8000;
     private static Socket s;
     private PrintWriter pw;
 
@@ -48,20 +48,35 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
         initializeViews();
         message = (TextView)findViewById(R.id.message);
-        button = findViewById(R.id.button);
+        buttonLeft = findViewById(R.id.button);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        buttonLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                data = "Click";
+                data = "LClick";
                 sendText(data);
             }
         });
-
+        buttonRight = findViewById(R.id.button3);
+        buttonRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                data = "RClick";
+                sendText(data);
+            }
+        });
+        buttonMid= findViewById(R.id.button4);
+        buttonMid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                data = "MClick";
+                sendText(data);
+            }
+        });
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if(sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null){
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            sensorManager.registerListener(this, accelerometer, 10000000);
+            sensorManager.registerListener(this, accelerometer, 10000000,10000);
         } else{
             Log.e("Error", "No Sensor");
         }
@@ -121,9 +136,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             deltaY = 0.0f;
         else{
             if(deltaX>1)
-                direction = "Up";
-            else
                 direction = "Down";
+            else
+                direction = "Up";
             data = deltaY + " " + direction;
         }
         if(direction.compareTo("")!=0){
